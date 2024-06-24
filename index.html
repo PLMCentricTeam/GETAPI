@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch XML API Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .invalid {
+            background-color: red;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        a {
+            color: blue;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+        <!-- <h1>Fetch XML API Example</h1>
+        <button id="fetch-button">Fetch Data</button>
+        <ul id="data-list" class="data-list"></ul> -->
+    <h1>Data dari API JSON</h1>
+    <div class="form-group">
+        <label for="token">Security Token:</label>
+        <input type="text" id="token" placeholder="Enter your security token">
+    </div>
+    <button id="fetch-button">Fetch Data</button>
+    <!-- <div id="data-list"></div> -->
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>Style Name</th>
+                <th>ERP Code</th>
+                <th>Category</th>
+                <th>Product Category</th>
+                <th>Product Type</th>
+                <th>Division</th>
+                <th>Program</th>
+                <th>Styling Info</th>
+                <th>Wash Category</th>
+                <th>Wash Sub Category</th>
+                <!-- <th>Modified Date</th> -->
+                <th>Link</th> 
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be inserted here by JavaScript -->
+        </tbody>
+    </table>
+    <script src="script.js"></script>
+    <script src="Master Data/MasterCategory.js"></script>
+    <script src="Master Data/MasterERPCode.js"></script>
+    <script src="Master Data/MasterProductCategory.js"></script>
+    <script src="Master Data/MasterProductType.js"></script>
+    <script src="Master Data/MasterDivision.js"></script>
+    <script src="Master Data/MasterProgram.js"></script>
+    <script src="Master Data/MasterStylingInfo.js"></script>
+    <script src="Master Data/MasterWashCategory.js"></script>
+    <script src="Master Data/MasterWashSubCategory.js"></script>
+</body>
+</html>
