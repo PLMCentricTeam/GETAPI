@@ -1,0 +1,101 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #040C1C;
+}
+h1 {
+    color: #FFFFFF;
+}
+.container {
+    max-width: 500px;
+    margin: auto;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #FFFFFF;
+}
+input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    box-sizing: border-box;
+    background-color: #181C24;
+    border-color: #9A9A9A;
+    border-width: thin;
+    border-radius: 5px;
+    color: #FFFFFF;
+}
+button {
+    padding: 10px 15px;
+    background-color: #4884FC;
+    color: white;
+    font-size: 10px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+button:hover {
+    background-color: #3a7bfe;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    /* border-radius: 5px; */
+}
+th, td {
+    padding: 8px;
+    text-align: center;
+    width: calc(100% / 13); /* Fixed width for each column */
+    box-sizing: border-box; /* Ensure padding is included in width calculation */
+    word-break: break-word; /* Ensure long words break to avoid expanding the column width */
+}
+.invalid {
+    background-color: red;
+    /* display: inline-block; */
+    margin: 4px 6px;
+    border-radius: 5px;
+}
+.invalidColor {
+    background-color: red;
+    /* display: inline-block; */
+    padding: 2px 4px;
+    border-radius: 5px;
+}
+th {
+    background-color: #181C24;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    /* border: none; */
+    height: 30px;
+    text-align: center;
+}
+tr {
+    background-color: #040C1C;
+    color: white;
+    font-size: 10px;
+    font-weight:lighter;
+    border-bottom: 1px solid #9A9A9A;
+    height: 30px;
+}
+
+.Cell-Link {
+    display: inline-block;
+    padding: 4px 6px;
+    color: #000000;
+    background-color: #FFFFFF;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.Cell-Link:hover {
+    background-color: #e8e8e8;
+}
