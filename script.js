@@ -1,9 +1,16 @@
 document.getElementById('fetch-button').addEventListener('click', fetchData);
-
+// const numberOfRequests = 2;
 function fetchData() {
     const token = document.getElementById('token').value;
-    const URLStyle = `https://api.allorigins.win/get?url=${encodeURIComponent('https://busana-prod.centricsoftware.com/csi-requesthandler/api/v2/styles?active=false&bag_ready_to_validate=true&node_name=!&SecurityTokenURL=')}${token}`;
-    fetch(URLStyle , {
+    const Style = document.getElementById('searchInput').value;
+    const URLStyle = `https://api.allorigins.win/get?url=${encodeURIComponent('https://busana-prod.centricsoftware.com/csi-requesthandler/api/v2/styles?active=false&bag_ready_to_validate=true&SecurityTokenURL=')}${token}`;
+    let FilteredURLStyle = URLStyle;
+    if (Style) {
+        // Jika nama style tidak kosong
+        FilteredURLStyle += '%26node_name=' + encodeURIComponent(Style); // Tambahkan parameter 'name' dengan nama style yang di-encode
+    }
+    console.log(FilteredURLStyle);
+    fetch(FilteredURLStyle , {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json', // Atur header yang diperlukan
@@ -324,3 +331,4 @@ function fetchData() {
         }
     })  
 }
+// }
