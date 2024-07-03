@@ -12,8 +12,20 @@
         <label for="token">Security Token:</label>
         <input type="text" id="token" placeholder="Enter your security token">
     </div>
-    <button id="fetch-button">Get Data</button>
-    <input type="text" class="search-input" id="searchInput" placeholder="Enter style number">
+    <div class="Header">
+        <div class="left-section">
+            <input type="text" class="search-input" id="searchInput" placeholder="Enter style number">
+            <h2>Result :</h2>
+            <select id="limit">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+        </div>
+        <div class="right-section"></div>
+            <button id="fetch-button">Get Data</button>
+        </div>
+    </div>
     <!-- <div id="data-list"></div> -->
     <table id="data-table">
         <thead>
