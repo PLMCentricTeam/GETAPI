@@ -1,334 +1,322 @@
 document.getElementById('fetch-button').addEventListener('click', fetchData);
-// const numberOfRequests = 2;
 function fetchData() {
     const token = document.getElementById('token').value;
+    const limit = document.getElementById('limit').value;
     const Style = document.getElementById('searchInput').value;
-    const URLStyle = `https://api.allorigins.win/get?url=${encodeURIComponent('https://busana-prod.centricsoftware.com/csi-requesthandler/api/v2/styles?active=false&bag_ready_to_validate=true&SecurityTokenURL=')}${token}`;
+    const URLStyle = `https://api.allorigins.win/get?url=${encodeURIComponent('https://busana-prod.centricsoftware.com/csi-requesthandler/api/v2/styles?active=false&bag_ready_to_validate=true&limit=')}${limit}%26SecurityTokenURL=${token}`;
+    console.log(URLStyle);
     let FilteredURLStyle = URLStyle;
     if (Style) {
-        // Jika nama style tidak kosong
-        FilteredURLStyle += '%26node_name=' + encodeURIComponent(Style); // Tambahkan parameter 'name' dengan nama style yang di-encode
+        // If style name isn't blank
+        FilteredURLStyle += '%26node_name=' + encodeURIComponent(Style); // add "Style Name" into link
     }
     console.log(FilteredURLStyle);
-    fetch(FilteredURLStyle , {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json', // Atur header yang diperlukan
-        },
-    })
-    .then(response => {
-      if (response.ok) return response.json()
-      throw new Error('Network response was not ok.')
-    })
-    .then(data => {
-        // Mengakses data di dalam API
-        const contents = data.contents;
-        let dataArray;
-        try {
-            dataArray = JSON.parse(contents) // Merubah data dari API menjadi Array
-            console.log('Data JSON telah diubah menjadi array:', dataArray);
-        } catch (error) {
-            console.error('Error parsing JSON:', error);
-        }
+    var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
 
-        //Function untuk check apakah Szie Range sudah ada di master data
-        function isSizeRangeInMasterData(dataArray) {
-            for (let i = 0; i < MasterSizeRange.length; i++) {
-                if (MasterSizeRange[i] === dataArray.bag_actual_size_range) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        //Function untuk check apakah Style Name sesuai ketentuan
-        function isStyleName(dataArray) {
-            if (dataArray.length > 20) {
-                return true;
-            }
-            if (dataArray.node_name.indexOf(" ") < 0) {
-                return true;
-            }
-            if (dataArray.node_name == dataArray.node_name.toUpperCase()) {
-                return true;
-            }
-            return false;
-        }
-        //Function untuk check apakah ERP Code sudah ada di master data
-        function isERPCodeInMasterData(dataArray) {
-            for (let i = 0; i < MasterERPCode.length; i++) {
-                if (MasterERPCode[i] === dataArray.bag_erp_code) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        //Function untuk check apakah Category sudah ada di master data
-        function isCategoryInMasterData(dataArray) {
-            for (let i = 0; i < MasterCategory.length; i++) {
-                if (MasterCategory[i] === dataArray.bag_category_2_code) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        //Function untuk check apakah Product Category sudah ada di master data
-        function isProductCategoryInMasterData(dataArray) {
-            for (let i = 0; i < MasterProductCategory.length; i++) {
-                if (MasterProductCategory[i] === dataArray.bag_product_category) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        //Function untuk check apakah Product Type sudah ada di master data
-        function isProductTypeInMasterData(dataArray) {
-            for (let i = 0; i < MasterProductType.length; i++) {
-                if (MasterProductType[i] === dataArray.bag_collection_code) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        //Function untuk check apakah Division sudah ada di master data
-        function isDivisionInMasterData(dataArray) {
-            for (let i = 0; i < MasterDivision.length; i++) {
-                if (MasterDivision[i] === dataArray.bag_division_code) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        //Function untuk check apakah Program sudah ada di master data
-         function isProgramInMasterData(dataArray) {
-            for (let i = 0; i < MasterProgram.length; i++) {
-                if (MasterProgram[i] === dataArray.bag_master_program) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        //Function untuk check apakah Styling Info sudah ada di master data
-         function isStylingInfoInMasterData(dataArray) {
-            for (let i = 0; i < MasterStylingInfo.length; i++) {
-                if (MasterStylingInfo[i] === dataArray.bag_programs) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        //Function untuk check apakah Wash Category sudah ada di master data
-        function isWashCategoryInMasterData(dataArray) {
-            for (let i = 0; i < MasterWashCategory.length; i++) {
-                if (MasterWashCategory[i] === dataArray.bag_wash_category) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        //Function untuk check apakah Wash Sub Catogory sudah ada di master data
-        function isWashSubCategoryInMasterData(dataArray) {
-            for (let i = 0; i < MasterWashSubCategory.length; i++) {
-                if (MasterWashSubCategory[i] === dataArray.bag_wash_sub_category) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        // Melakukan pengecekan apakah data dari API sudah berubah menjadi Array
-        if (dataArray && Array.isArray(dataArray)) {
-            dataArray.sort((a, b) => new Date(a._modified_at) - new Date(b._modified_at)); // Melakukan Sort data dari Modified Date
+        xhr.addEventListener("readystatechange", function() {
+        if(this.readyState === 4) {
+            const jsonresponse = JSON.parse(this.responseText);
+            const jsonData = JSON.parse(jsonresponse.contents);
             const tableBody = document.getElementById('data-table').getElementsByTagName('tbody')[0];
-            tableBody.innerHTML = ''; // Mengosongkan tabel sebelum menambahkan data baru
-            dataArray.forEach(item => {
-                const tr = document.createElement('tr');
-                
-                // Melakukan function untuk memasukan data ke masing masing row sesuai urutan
-                const row = tableBody.insertRow();
-                const cellStyleName = row.insertCell(0);
-                const cellERPCode = row.insertCell(1);
-                const cellCategory = row.insertCell(2);
-                const cellProductCategory = row.insertCell(3);
-                const cellProductType = row.insertCell(4);
-                const cellDivision = row.insertCell(5);
-                const cellProgram = row.insertCell(6);
-                const cellStylinginfo = row.insertCell(7);
-                const cellWashCategory = row.insertCell(8);
-                const cellWashSubCategory = row.insertCell(9);
-                const cellSizes = row.insertCell(10);
-                const cellColorway = row.insertCell(11);
-                const cellLink = row.insertCell(12);
-
-                cellStyleName.textContent = item.node_name;
-                cellERPCode.textContent = item.bag_erp_code;
-                cellCategory.textContent = item.bag_category_2_code;
-                cellProductCategory.textContent = item.bag_product_category;
-                cellProductType.textContent = item.bag_collection_code;
-                cellDivision.textContent = item.bag_division_code;
-                cellProgram.textContent = item.bag_master_program;
-                cellStylinginfo.textContent = item.bag_programs;
-                cellWashCategory.textContent = item.bag_wash_category;
-                cellWashSubCategory.textContent = item.bag_wash_sub_category;
-                cellSizes.textContent = item.bag_actual_size_range;
-                // cellColorway.textContent = item.active_colorways;
-
-                // Membuat URL link berdasarkan id
-                const linkUrl = `https://busana-prod.centricsoftware.com/WebAccess/home.html#URL=${item.id}&RURL=&RightPane=&RPURL=&Tab=Properties&NR=1`;
-                const link = document.createElement('a');
-                link.href = linkUrl;
-                link.textContent = 'View Details';
-                link.classList.add("Cell-Link");
-                link.target = '_blank'; // Membuka link di tab baru
-
-                cellLink.appendChild(link);
-                
-                //Melakukan filter hanya Colorway yang Active dan mempunyai Color Specification
-                const StyleId = item.id;
-                console.log ('Style' + StyleId);
-                // Membuat list Colorway
-                const Colorway = item.active_colorways;
-                const ColorwayList = Colorway.map(element => element.split(","));
-                console.log(ColorwayList);
-                ColorwayList.forEach(item => {  
-                    const URLColorway = `https://api.allorigins.win/get?url=${encodeURIComponent('https://busana-prod.centricsoftware.com/csi-requesthandler/api/v2/colorways/')}${item}?SecurityTokenURL=${token}`;
-                    console.log(URLColorway);
-                    fetch(URLColorway , {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json', // Atur header yang diperlukan
-                        },
-                    })
-                    .then(response => {
-                        if (response.ok) return response.json()
-                        throw new Error('Network response was not ok.')
-                    })
-                    .then(dataColorway => {
-                        // Mengakses data di dalam API
-                        const contentsColorway = dataColorway.contents;
-                        let dataArrayColorway;
-                        try {
-                            dataArrayColorway = JSON.parse(contentsColorway) // Merubah data API menjadi Array
-                            console.log('Data JSON telah diubah menjadi array:', dataArrayColorway);
-                            
-                        } catch (error) {
-                            console.error('Error parsing JSON:', error);
-                        }
-                        //Function untuk check apakah Colorway sudah ada di master data
-                        function isColorwayInMasterData(dataArrayColorway) {
-                            for (let i = 0; i < MasterColor.length; i++) {
-                                if (MasterColor[i] === dataArrayColorway.bag_color_spec_code) {
-                                    return true;
-                                }
-                            }
-                            return false;
-                        }
-                        const ListColorway = document.createElement("span"); // Membuat data baru berdasarkan banyaknya ata colorway yang active
-                        ListColorway.textContent = dataArrayColorway.bag_color_spec_code + ', ';
-                        //Validasi data Colorway    
-                        if (!isColorwayInMasterData(dataArrayColorway)) {
-                            ListColorway.classList.add('invalidColor');
-                        }
-                        // Menampilkan List Colorway data ke dalam Cell Colorway
-                        cellColorway.appendChild(ListColorway); 
-                    })      
-                });
-
-                //Membuat List Size Range
-                // if (isSizeRangeInMasterData(item)) {
-                    // const Sizes = item.product_sizes;
-                    // const SizesList = Sizes.map(element => element.split(","));
-                    // console.log('Sizenya', SizesList);
-                    // SizesList.forEach(item => {
-                    //     const URLSizes = `https://api.allorigins.win/get?url=${encodeURIComponent('https://busana-test.centricsoftware.com/csi-requesthandler/api/v2/product_sizes/')}${item}?SecurityTokenURL=${token}`;
-                    //     fetch(URLSizes , {
-                    //         method: 'GET',
-                    //         headers: {
-                    //             'Content-Type': 'application/json', // Atur header yang diperlukan
-                    //         },
-                    //     })
-                    //     .then(response => {
-                    //         if (response.ok) return response.json()
-                    //         throw new Error('Network response was not ok.')
-                    //     })
-                    //     .then(dataSizes => {
-                    //         // Mengakses data di dalam API
-                    //         const contentsSizes = dataSizes.contents;
-                    //         let dataArraySizes;
-                    //         try {
-                    //             dataArraySizes = JSON.parse(contentsSizes) // Merubah data API menjadi Array
-                    //             console.log('Data JSON telah diubah menjadi array:', dataArraySizes);
-                                
-                    //         } catch (error) {
-                    //             console.error('Error parsing JSON:', error);
-                    //         }
-                    //         //Function untuk check apakah Sizes sudah ada di master data
-                    //         // function isSizesInMasterData(dataArraySizes) {
-                    //         //     for (let i = 0; i < MasterColor.length; i++) {
-                    //         //         if (MasterColor[i] === dataArraySizes.bag_color_spec_code) {
-                    //         //             return true;
-                    //         //         }
-                    //         //     }
-                    //         //     return false;
-                    //         // }
-                    //         const ListSizes = document.createElement("span"); // Membuat data baru berdasarkan banyaknya ata colorway yang active
-                    //         ListSizes.textContent = dataArraySizes.bag_size_name + ', ';
-                    //         //Validasi data Sizes    
-                    //         // if (!isColorwayInMasterData(dataArrayColorway)) {
-                    //         //     ListSizes.classList.add('invalidColor');
-                    //         // }
-                    //         // Menampilkan List Colorway data ke dalam Cell Colorway
-                    //         cellSizes.appendChild(ListSizes); 
-                    //     })      
-                    // });
-                // }
-                //Validasi data Size Range    
-                // if (!isSizeRangeInMasterData(item)) {
-                //     cellSizes.classList.add('invalid');
-                // }
-
-                //Validasi Style Name    
-                if (!isStyleName(item)) {
-                    cellStyleName.classList.add('invalid');
-                }
-                //Validasi data ERP Code    
-                if (!isERPCodeInMasterData(item)) {
-                    cellERPCode.classList.add('invalid');
-                }
-                //Validasi data Category    
-                if (!isCategoryInMasterData(item)) {
-                    cellCategory.classList.add('invalid');
-                }
-                //Validasi data Product Category    
-                if (!isProductCategoryInMasterData(item)) {
-                    cellProductCategory.classList.add('invalid');
-                }
-                //Validasi data Product Type    
-                if (!isProductTypeInMasterData(item)) {
-                    cellProductType.classList.add('invalid');
-                }
-                //Validasi data Division    
-                if (!isDivisionInMasterData(item)) {
-                    cellDivision.classList.add('invalid');
-                }
-                //Validasi data Program    
-                if (item.bag_master_program && !isProgramInMasterData(item)) {
-                    cellProgram.classList.add('invalid');
-                }
-                //Validasi data Styling Info    
-                if (item.bag_programs && !isStylingInfoInMasterData(item)) {
-                    cellStylinginfo.classList.add('invalid');
-                }
-                //Validasi data Wash Cateogry    
-                if (item.bag_wash_category && !isWashCategoryInMasterData(item)) {
-                    cellWashCategory.classList.add('invalid');
-                }
-                //Validasi data Wash Sub Cateogry    
-                if (item.bag_wash_sub_category && !isWashSubCategoryInMasterData(item)) {
-                    cellWashSubCategory.classList.add('invalid');
-                }
-
-                console.log(`Code: ${item.bag_erp_code}, Modified: ${item.bag_master_program}`);
-            });            
+            tableBody.innerHTML = '';
+            displayData(jsonData);
         }
-    })  
+        //Display Data
+        function displayData(jsonData) {
+            const tableBody = document.getElementById('data-table').getElementsByTagName('tbody')[0];
+            jsonData.forEach(item => {
+                const tr = document.createElement('tr');
+                const row = tableBody.insertRow();
+                displayDataStylename();
+                displayDataERPCode();
+                displayDataCategory();
+                displayDataProductCategory();
+                displayDataProductType();
+                displayDataDivision();
+                displayDataProgram();
+                displayDataStylingInfo();
+                displayDataWashCategory();
+                displayDataWashSubCategory();
+                displayDataSizes();
+                displayDataColorway();
+                displayDataLink();
+
+                //Function to define Cell Style Name
+                function displayDataStylename() {
+                    const cellStyleName = row.insertCell(0);
+                    cellStyleName.textContent = item.node_name;
+                    //Function Validation Rule for Style Name
+                    function isStyleName(item) {
+                        if (item.length > 20) {
+                            return true;
+                        }
+                        if (item.node_name.indexOf(" ") < 0) {
+                            return true;
+                        }
+                        if (item.node_name == item.node_name.toUpperCase()) {
+                            return true;
+                        }
+                        return false;
+                    }
+                    //Validation Style Name    
+                    if (!isStyleName(item)) {
+                        cellStyleName.classList.add('invalid');
+                    }
+                }
+
+                //Function to define Cell ERP Code
+                function displayDataERPCode() {
+                    const cellERPCode = row.insertCell(1);
+                    cellERPCode.textContent = item.bag_erp_code;
+                    //Function Validation Rule for ERP Code
+                    function isERPCodeInMasterData(item) {
+                        for (let i = 0; i < MasterERPCode.length; i++) {
+                            if (MasterERPCode[i] === item.bag_erp_code) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    //Validation ERP Code 
+                    if (!isERPCodeInMasterData(item)) {
+                        cellERPCode.classList.add('invalid');
+                    }
+                }
+            
+                //Function to define Cell Category
+                function displayDataCategory() {
+                    const cellCategory = row.insertCell(2);
+                    cellCategory.textContent = item.bag_category_2_code;
+                    //Function Validation Rule for Category
+                    function isCategoryInMasterData(item) {
+                        for (let i = 0; i < MasterCategory.length; i++) {
+                            if (MasterCategory[i] === item.bag_category_2_code) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    //Validation Category    
+                    if (!isCategoryInMasterData(item)) {
+                        cellCategory.classList.add('invalid');
+                    }
+                }
+
+                //Function to define Cell Product Category
+                function displayDataProductCategory() {
+                    const cellProductCategory = row.insertCell(3);
+                    cellProductCategory.textContent = item.bag_product_category;
+                    //Function Validation Rule for Product Category
+                    function isProductCategoryInMasterData(item) {
+                        for (let i = 0; i < MasterProductCategory.length; i++) {
+                            if (MasterProductCategory[i] === item.bag_product_category) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    //Validation Product Category    
+                    if (!isProductCategoryInMasterData(item)) {
+                        cellProductCategory.classList.add('invalid');
+                    }
+                }
+
+                //Function to define Cell Product Type
+                function displayDataProductType() {
+                    const cellProductType = row.insertCell(4);
+                    cellProductType.textContent = item.bag_collection_code;
+                    //Function Validation Rule for Product Type
+                    function isProductTypeInMasterData(item) {
+                        for (let i = 0; i < MasterProductType.length; i++) {
+                            if (MasterProductType[i] === item.bag_collection_code) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    //Validation Product Type    
+                    if (!isProductTypeInMasterData(item)) {
+                        cellProductType.classList.add('invalid');
+                    }
+                }
+
+                //Function to define Cell Division
+                function displayDataDivision() {
+                    const cellDivision = row.insertCell(5);
+                    cellDivision.textContent = item.bag_division_code;
+                    //Function Validation Rule for Division
+                    function isDivisionInMasterData(item) {
+                        for (let i = 0; i < MasterDivision.length; i++) {
+                            if (MasterDivision[i] === item.bag_division_code) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    //Validation Division    
+                    if (!isDivisionInMasterData(item)) {
+                        cellDivision.classList.add('invalid');
+                    }
+                }
+
+                //Function to define Cell Program
+                function displayDataProgram() {
+                    const cellProgram = row.insertCell(6);
+                    cellProgram.textContent = item.bag_master_program;
+                    //Function Validation Rule for Program
+                    function isProgramInMasterData(item) {
+                        for (let i = 0; i < MasterProgram.length; i++) {
+                            if (MasterProgram[i] === item.bag_master_program) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    //Validation Program    
+                    if (item.bag_master_program && !isProgramInMasterData(item)) {
+                        cellProgram.classList.add('invalid');
+                    }
+                }
+
+                //Function to define Cell Styling Info
+                function displayDataStylingInfo() {
+                    const cellStylinginfo = row.insertCell(7);
+                    cellStylinginfo.textContent = item.bag_programs;
+                    //Function Validation Rule for Styling Info
+                    function isStylingInfoInMasterData(item) {
+                        for (let i = 0; i < MasterStylingInfo.length; i++) {
+                            if (MasterStylingInfo[i] === item.bag_programs) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    //Validation Styling Info    
+                    if (item.bag_programs && !isStylingInfoInMasterData(item)) {
+                        cellStylinginfo.classList.add('invalid');
+                    }
+                }
+
+                //Function to define Cell Wash Category
+                function displayDataWashCategory() {
+                    const cellWashCategory = row.insertCell(8);
+                    cellWashCategory.textContent = item.bag_wash_category;
+                    //Function Validation Rule for Wash Category
+                    function isWashCategoryInMasterData(item) {
+                        for (let i = 0; i < MasterWashCategory.length; i++) {
+                            if (MasterWashCategory[i] === item.bag_wash_category) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    //Validation Wash Category    
+                    if (item.bag_wash_category && !isWashCategoryInMasterData(item)) {
+                        cellWashCategory.classList.add('invalid');
+                    }
+                }
+
+                //Function to define Cell Wash Sub Category
+                function displayDataWashSubCategory() {
+                    const cellWashSubCategory = row.insertCell(9);
+                    cellWashSubCategory.textContent = item.bag_wash_sub_category;
+                    //Function Validation Rule for Wash Sub Category
+                    function isWashSubCategoryInMasterData(item) {
+                        for (let i = 0; i < MasterWashSubCategory.length; i++) {
+                            if (MasterWashSubCategory[i] === item.bag_wash_sub_category) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    //Validation Wash Sub Category    
+                    if (item.bag_wash_sub_category && !isWashSubCategoryInMasterData(item)) {
+                        cellWashSubCategory.classList.add('invalid');
+                    }
+                }
+
+                //Function to define Cell Sizes
+                function displayDataSizes() {
+                    const cellSizes = row.insertCell(10);
+                    cellSizes.textContent = item.bag_actual_size_range;
+                    //Function Validation Rule for Sizes
+                    function isSizeRangeInMasterData(item) {
+                        for (let i = 0; i < MasterSizeRange.length; i++) {
+                            if (MasterSizeRange[i] === item.bag_actual_size_range) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    //Validation Sizes    
+                    if (item.actual_size_range && !isSizeRangeInMasterData(item)) {
+                        cellSizes.classList.add('invalid');
+                    }
+                }
+
+                //Function to define Colorway
+                function displayDataColorway () {
+                    const cellColorway = row.insertCell(11);
+                    const Colorway = item.active_colorways;
+                    const ColorwayList = Colorway.map(element => element.split(","));
+                    console.log('Data Colorway :', ColorwayList)
+                    ColorwayList.forEach(item => { 
+                        const URLColorway = `https://api.allorigins.win/get?url=${encodeURIComponent('https://busana-prod.centricsoftware.com/csi-requesthandler/api/v2/colorways/')}${item}?SecurityTokenURL=${token}`;
+                        console.log(URLColorway)
+                        var xhr = new XMLHttpRequest();
+                        xhr.withCredentials = true;
+
+                        xhr.addEventListener("readystatechange", function() {
+                        if(this.readyState === 4) {
+                            // console.log(this.responseText);
+                            const jsonresponseColorway = JSON.parse(this.responseText);
+                            const jsonDataColorway = JSON.parse(jsonresponseColorway.contents);
+                            //Function Validation Rule for Colorway
+                            function isColorwayInMasterData(jsonDataColorway) {
+                                for (let i = 0; i < MasterColor.length; i++) {
+                                    if (MasterColor[i] === jsonDataColorway.bag_color_spec_code) {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            }
+                            const ListColorway = document.createElement("span"); // Create new data based on Active Colorway
+                            ListColorway.textContent = jsonDataColorway.node_name + ', ';
+                            //Validasi data Colorway    
+                            if (jsonDataColorway.color_specification !== 'centric%3A' && !isColorwayInMasterData(jsonDataColorway)) {
+                                ListColorway.classList.add('invalidColor');
+                            }
+                            // Display List Colorway data into Cell Colorway
+                            cellColorway.appendChild(ListColorway);
+                        }
+                        });
+
+                        xhr.open("GET", URLColorway);
+                        xhr.send();
+
+                    });
+                }
+
+                //Function to define Cell Link
+                function displayDataLink() {
+                    const cellLink = row.insertCell(12);
+                    // Create URL link Basde On id
+                    const linkUrl = `https://busana-prod.centricsoftware.com/WebAccess/home.html#URL=${item.id}&RURL=&RightPane=&RPURL=&Tab=Properties&NR=1`;
+                    const link = document.createElement('a');
+                    link.href = linkUrl;
+                    link.textContent = 'View Details';
+                    link.classList.add("Cell-Link");
+                    link.target = '_blank'; // Open link in new tab
+
+                    cellLink.appendChild(link);
+                }
+
+            });
+        }
+
+        });
+
+        xhr.open("GET", FilteredURLStyle);
+        xhr.send();
 }
-// }
