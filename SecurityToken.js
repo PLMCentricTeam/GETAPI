@@ -1,1 +1,1 @@
-const securityToken = '{data_after_equal}';
+const securityToken :"centric://_CS_SecurityToken/67f4208d-f133-452d-9e33-8ff61de90881"
