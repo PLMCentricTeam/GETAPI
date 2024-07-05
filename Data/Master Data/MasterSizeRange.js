@@ -1,0 +1,17 @@
+const MasterSizeRange = [
+'ATM',
+'ATP',
+'B&T',
+'CHR',
+'HBG',
+'ISN',
+'JJL',
+'KDS',
+'MSY',
+'PLS',
+'PTT',
+'R&T',
+'REG',
+'TLL',
+'WMN',
+];
