@@ -32,6 +32,7 @@ function fetchData() {
                     const tableBody = document.getElementById('data-table').getElementsByTagName('tbody')[0];
                     tableBody.innerHTML = '';
                     displayData(jsonData);
+                    console.log("JSON Data:", jsonData);
                 }
                 //Display Data
                 function displayData(jsonData) {
