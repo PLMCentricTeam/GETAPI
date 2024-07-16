@@ -1,1 +1,1 @@
-const securityToken ="centric://_CS_SecurityToken/a4e5bbcd-4def-4c88-8ba5-6c90243130ea";
+const securityToken ="centric://_CS_SecurityToken/12ed0117-0488-4347-9c34-e2fcb36a3b23";
